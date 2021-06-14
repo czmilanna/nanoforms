@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+    {% load tz %}
+    <h5>Datasets
+        <button onclick="location.href = '/dataset/create';" type="button"
+                class="btn btn-outline-success btn-sm"><span class="oi oi-plus"></span> New dataset
+        </button>
+    </h5>
+    {% if object_list %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Number of files</th>
+                <th scope="col">Size</th>
+                <th scope="col">Date created</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for dataset in object_list %}
+                <tr>
+                    <td scope="row">{{ dataset.name }}
+                        {% if dataset.public %}
+                            <span class="badge badge-secondary">Public</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ dataset.get_type_display }}</td>
+                    <td>{{ dataset.number_of_files }}</td>
+                    <td>{{ dataset.size }}</td>
+                    <td>{{ dataset.created_at | localtime }}</td>
+                    <td>
+                        <button onclick="location.href = '/dataset/{{ dataset.id }}/';" type="button"
+                                class="btn btn-outline-primary btn-sm"><span class="oi oi-document"></span> Details
+                        </button>
+                    </td>
+                    <td>
+                        {% if not dataset.public %}
+                            <button onclick="location.href = '/dataset/{{ dataset.id }}/delete?next={{ request.path }}';"
+                                    type="button"
+                                    class="btn btn-outline-danger btn-sm"><span class="oi oi-trash"></span> Remove
+                            </button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        You don't have any dataset.
+    {% endif %}
+{% endblock %}

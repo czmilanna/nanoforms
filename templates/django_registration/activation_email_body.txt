@@ -1,0 +1,3 @@
+Welcome {{user}}, here is your registration link
+{{scheme}}://{{site}}/accounts/activate/{{activation_key}}
+This link will expire in {{expiration_days}} days.

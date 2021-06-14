@@ -1,0 +1,42 @@
+version: '3'
+services:
+
+  entry:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "7337:80"
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/nanoforms/Dockerfile
+    command: bash -c "python manage.py migrate && gunicorn nanoforms.wsgi:application --timeout 43200 --bind 0.0.0.0:8000"
+    restart: unless-stopped
+    volumes:
+      - "${BASE_STORAGE_DIR}:${BASE_STORAGE_DIR}"
+    env_file:
+      - docker-compose.env
+
+  cromwell:
+    build:
+      context: .
+      dockerfile: docker/cromwell/Dockerfile
+    restart: unless-stopped
+    entrypoint: /bin/bash
+    command: '-c "cd ${BASE_STORAGE_DIR} && java -jar -Dconfig.file=/cromwell.conf /cromwell.jar server"'
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "${BASE_STORAGE_DIR}:${BASE_STORAGE_DIR}"
+    env_file:
+      - docker-compose.env
+
+  postgres:
+    image: postgres:10.1
+    restart: unless-stopped
+    volumes:
+      - "${BASE_STORAGE_DIR}/postgres-data:/var/lib/postgresql/data"
+    env_file:
+      - docker-compose.env

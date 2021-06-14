@@ -1,0 +1,477 @@
+{% extends "base.html" %}
+{% block content %}
+    <h5>Frequently Asked Questions (FAQ)</h5>
+    <br/>
+    <div class="accordion" id="accordionFAQ">
+        <div class="card">
+            <div class="card-header" id="heading1">
+                <h2 class="mb-0">
+                    <button class="btn btn-outline-light btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                        How to add a dataset?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse1" class="collapse show" aria-labelledby="heading1" data-parent="#accordionFAQ">
+                <div class="card-body justify">
+                    <ol>
+                        <li>Click <a href="{% url 'dataset' %}">Datasets</a> in Navigation bar, then click
+                            <button onclick="location.href = '/dataset/create';" type="button"
+                                    class="btn btn-outline-success btn-sm"><span class="oi oi-plus"></span> New dataset
+                            </button>
+                            .
+                        </li>
+                        <li>Type the new dataset name and select type. For nanopore MinION sequencing data select
+                            'Nanopore sequencing data' option and click Browse button. Open the directory with
+                            basecalled data and choose file or files.
+                        </li>
+                        <li>
+                            When it comes to hybrid Nanopore and Illumina assembly, we support only paired-end DNA
+                            sequencing reads from Illumina. To upload paired-end sequencing reads from Illumina select
+                            'Illumina sequencing data' option and click Browse button. Open the directory with
+                            sequencing data and choose reads.
+                        </li>
+                        <li>
+                            We support fastq, fastq.gz, tar and tar.gz formats. Note, that our server is capable of
+                            handling small genomes, which total size cannot exceed 15 GB.
+                            Click <input
+                                type="submit" name="submit" value="Submit" class="btn btn-primary"
+                                id="submit-id-submit" disabled>
+                            button and wait when uploading will be finished.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="heading2">
+                <h2 class="mb-0">
+                    <button class="btn btn-outline-light btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                        What is a quality test and how to perform it?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse2" class="collapse" aria-labelledby="heading2" data-parent="#accordionFAQ">
+                <div class="card-body justify">
+                    Quality tests allow you to generate a statistical summary and a number of plots and assess the
+                    quality of uploaded dataset. Performing quality test is optional, but if you are a beginner in
+                    processing sequencing data, we encourage you to perform it and look at the results.
+                    <ol>
+                        <li>Click <a href="{% url 'quality' %}">Quality tests</a> in Navigation bar, then click
+                            <button onclick="location.href = '/quality/create';" type="button"
+                                    class="btn btn-outline-success btn-sm"><span class="oi oi-bar-chart"></span> Perform
+                                quality test
+                            </button>
+                            .
+                        </li>
+                        <li> Type the new name of quality test and select a dataset. If you uploaded more than one
+                            dataset, you can see them in dropdown list.
+                        </li>
+                        <li>Click <input
+                                type="submit" name="submit" value="Submit" class="btn btn-primary"
+                                id="submit-id-submit" disabled>
+                            button.
+                        </li>
+                        <li>After pressing the button
+                            <button type="button" class="btn btn-outline-primary btn-sm" disabled><span
+                                    class="oi oi-document"></span>
+                                Details
+                            </button>
+                            in <a href="{% url 'quality' %}">Quality tests</a> you can see how many steps have been
+                            finished and how many left until the selected analysis is completed. The progress of the
+                            analysis and its duration is also displayed on the Gantt Chart. When analysis is completed,
+                            the workflow status will be changed from Running to Succeeded or Failed. If analysis is
+                            Succeeded, you will be able to see the report. In the other case, please contact us, to find
+                            out what went wrong. You do not have to wait until the analysis is complete, we will email
+                            you notification as soon as it is completed.
+                        </li>
+                        <li>If the results of analysis are satisfying, you can perform data assembly.
+                        </li>
+                        <li>You can also perform the quality test by going to the <a
+                                href="{% url 'dataset' %}">Datasets</a>
+                            list, and clicking
+                            <button type="button" class="btn btn-outline-primary btn-sm" disabled><span
+                                    class="oi oi-document"></span>
+                                Details
+                            </button>
+                            button on the selected row. From dataset details view, click
+                            <button onclick="location.href = '/quality/create';" type="button"
+                                    class="btn btn-outline-success btn-sm"><span class="oi oi-bar-chart"></span> Perform
+                                quality test
+                            </button>
+                            to create new quality test on this dataset.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="heading3">
+                <h2 class="mb-0">
+                    <button class="btn btn-outline-light btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapse3"
+                            aria-expanded="false" aria-controls="collapseOne">How to perform assembling genomes
+                        using long nanopore sequencing reads?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse3" class="collapse" aria-labelledby="heading3" data-parent="#accordionFAQ">
+                <div class="card-body justify">
+                    <ol>
+                        <li>Add a dataset and optionally perform a quality test.</li>
+                        <li>Click <a href="{% url 'assembly' %}">Data assembly</a> in Navigation bar, then click
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-success btn-sm dropdown-toggle"
+                                        id="btnGroupDrop1" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false" disabled>
+                                    <span class="oi oi-spreadsheet"></span> Perform data assembly
+                                </button>
+                            </div>
+                            .
+                        </li>
+                        <li>
+                            Select 'ONT assembly' option and type the new name of data assembly and select a
+                            dataset. If you uploaded more than one dataset, you can see them in dropdown list.
+                        </li>
+                        <li>If you are a beginner, you can try to perform analysis with default parameters value. You
+                            can also fill the following parameters values:
+                            <ul>
+                                <li><a href="https://github.com/fenderglass/Flye/blob/flye/docs/USAGE.md"
+                                       target="_blank">Flye -g</a>:
+                                    estimated genome size (for example, 5m or 2.6g). The genome size estimate is used
+                                    for solid k-mer selection in the initial disjointig assembly stage. Flye is not very
+                                    sensitive to this parameter, and the estimate could be rough. It is ok if the
+                                    parameter is within 0.5x-2x of the actual genome size. If the final assembly size is
+                                    very different from the initial guess, consider re-running the pipeline with an
+                                    updated estimate for better results. Note, that 5m = 5 megabase (5,000,000 bases)
+                                    and 2.6g = 2.6 gigabase (2,600,000,000 bases).
+                                </li>
+                                <li><a href="https://github.com/wdecoster/nanofilt" target="_blank"> Nanofilt -q</a>:
+                                    quality, filter on a minimum average read quality score (for example, 10),
+                                </li>
+                                <li><a href="https://github.com/wdecoster/nanofilt" target="_blank"> Nanofilt
+                                    -headcrop</a>: trim n nucleotides from start of read (for example, 75).
+                                </li>
+                                <li><a href="https://github.com/rrwick/Filtlong" target="_blank"> Filtlong
+                                    --min_length </a>: keep only this percentage of the best reads measured by bases
+                                    (for example, 1000 - discard any read which is shorter than 1 kbp).
+                                </li>
+                                <li><a href="https://github.com/rrwick/Filtlong" target="_blank"> Filtlong
+                                    --target_bases </a>: keep only the best reads up to this many total bases (for
+                                    example, 500000000 - remove the worst reads until only 500 Mbp remain, useful for
+                                    very large read sets. If the input read set is less than 500 Mbp, this setting will
+                                    have no effect).
+                                </li>
+                                <li><a href="https://github.com/tseemann/prokka#command-line-options" target="_blank">
+                                    Prokka --genus </a>: Genus name (default 'Genus').
+                                </li>
+                                <li><a href="https://github.com/tseemann/prokka#command-line-options" target="_blank">
+                                    Prokka --species </a>: Species name (default 'species').
+                                </li>
+                                <li><a href="https://github.com/tseemann/prokka#command-line-options" target="_blank">
+                                    Prokka --strain </a>: Strain name (default 'strain').
+                                </li>
+                                <li><a href="https://github.com/tseemann/prokka#command-line-options" target="_blank">
+                                    Prokka --plasmid </a>: Plasmid name or identifier (default '').
+                                </li>
+                            </ul>
+                            Confirm the entered values by ​​clicking the <input
+                                    type="submit" name="submit" value="Submit" class="btn btn-primary"
+                                    id="submit-id-submit" disabled>
+                            button.
+                        </li>
+                        <li>After pressing the button
+                            <button type="button" class="btn btn-outline-primary btn-sm" disabled><span
+                                    class="oi oi-document"></span>
+                                Details
+                            </button>
+                            in <a href="{% url 'assembly' %}">Data assembly</a> you can see how many steps have been
+                            finished and how many left until the selected data assembly is completed. As previously, the
+                            progress of the analysis and its duration is also displayed on the Gantt Chart. When
+                            analysis is completed, the workflow status will be changed from Running to Succeeded or
+                            Failed. If analysis is Succeeded, you will be able to see the report, download the consensus
+                            file and reports. In the other case, please contact us, to find out what went wrong. You do
+                            not have to wait until the analysis is complete, we will send email you notification when it
+                            is finished.
+                        </li>
+                        <li>You can also perform the data assembly by going to the <a
+                                href="{% url 'quality' %}">Quality tests</a>
+                            list, and clicking
+                            <button type="button" class="btn btn-outline-primary btn-sm" disabled><span
+                                    class="oi oi-document"></span>
+                                Details
+                            </button>
+                            button on the selected row. From quality tests details view, click
+                            <button onclick="location.href = '/assembly/create';" type="button"
+                                    class="btn btn-outline-success btn-sm"><span class="oi oi-bar-chart"></span> Perform
+                                data assembly
+                            </button>
+                            to create new quality test on this dataset.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="heading4">
+                <h2 class="mb-0">
+                    <button class="btn btn-outline-light btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapse4"
+                            aria-expanded="false" aria-controls="collapse4">How to perform assembling genomes
+                        using both sequencing reads from Oxford Nanopore Technology and paired-end DNA sequencing reads
+                        from Illumina?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse4" class="collapse" aria-labelledby="heading4" data-parent="#accordionFAQ">
+                <div class="card-body justify">
+                    <ol>
+                        <li>Add a dataset and optionally perform a quality test.</li>
+                        <li>Click <a href="{% url 'assembly' %}">Data assembly</a> in Navigation bar, then click
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-success btn-sm dropdown-toggle"
+                                        id="btnGroupDrop1" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false" disabled>
+                                    <span class="oi oi-spreadsheet"></span> Perform data assembly
+                                </button>
+                            </div>
+                            .
+                        </li>
+                        <li>
+                            Select 'Hybrid Nanopore and Illumina assembly' option and type the new name of data
+                            assembly. Then, select a dataset with Nanopore reads from the first dropdown list.
+                            Subsequently, select a dataset with Illumina reads from the second dropdown list and from
+                            choosen dataset select first read and second read.
+                        </li>
+                        <li>If you are a beginner, you can try to perform analysis with default parameters value. You
+                            can also fill the following parameters values:
+                            <ul>
+                                <li><a href="https://github.com/wdecoster/nanofilt" target="_blank"> Nanofilt -q</a>:
+                                    quality, filter on a minimum average read quality score (for example, 10),
+                                </li>
+                                <li><a href="https://github.com/wdecoster/nanofilt" target="_blank"> Nanofilt
+                                    -headcrop</a>: trim n nucleotides from start of read (for example, 75).
+                                </li>
+                                <li><a href="https://github.com/OpenGene/fastp#quality-filter" target="_blank"> Illumina
+                                    fastp -q
+                                </a>: the quality value that a base is qualified (for example, 15)
+                                </li>
+                                <li><a href="https://github.com/tseemann/prokka#command-line-options" target="_blank">
+                                    Prokka --genus </a>: Genus name (default 'Genus').
+                                </li>
+                                <li><a href="https://github.com/tseemann/prokka#command-line-options" target="_blank">
+                                    Prokka --species </a>: Species name (default 'species').
+                                </li>
+                                <li><a href="https://github.com/tseemann/prokka#command-line-options" target="_blank">
+                                    Prokka --strain </a>: Strain name (default 'strain').
+                                </li>
+                                <li><a href="https://github.com/tseemann/prokka#command-line-options" target="_blank">
+                                    Prokka --plasmid </a>: Plasmid name or identifier (default '').
+                                </li>
+                            </ul>
+                            Confirm the entered values by ​​clicking the <input
+                                    type="submit" name="submit" value="Submit" class="btn btn-primary"
+                                    id="submit-id-submit" disabled>
+                            button.
+                        </li>
+                        <li>After pressing the button
+                            <button type="button" class="btn btn-outline-primary btn-sm" disabled><span
+                                    class="oi oi-document"></span>
+                                Details
+                            </button>
+                            in <a href="{% url 'assembly' %}">Data assembly</a> you can see how many steps have been
+                            finished and how many left until the selected data assembly is completed. As previously, the
+                            progress of the analysis and its duration is also displayed on the Gantt Chart. When
+                            analysis is completed, the workflow status will be changed from Running to Succeeded or
+                            Failed. If analysis is Succeeded, you will be able to see the report, download the consensus
+                            file and reports. In the other case, please contact us, to find out what went wrong. You do
+                            not have to wait until the analysis is complete, we will send email you notification when it
+                            is finished.
+                        </li>
+                        <li>You can also perform the data assembly by going to the <a
+                                href="{% url 'quality' %}">Quality tests</a>
+                            list, and clicking
+                            <button type="button" class="btn btn-outline-primary btn-sm" disabled><span
+                                    class="oi oi-document"></span>
+                                Details
+                            </button>
+                            button on the selected row. From quality tests details view, click
+                            <button onclick="location.href = '/assembly/create';" type="button"
+                                    class="btn btn-outline-success btn-sm"><span class="oi oi-bar-chart"></span> Perform
+                                data assembly
+                            </button>
+                            to create new quality test on this dataset.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="heading5">
+                <h2 class="mb-0">
+                    <button class="btn btn-outline-light btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
+                        What does the badge 'Public' displayed next to the dataset name mean? What do the test data come from?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse5" class="collapse" aria-labelledby="heading5" data-parent="#accordionFAQ">
+                <div class="card-body justify">
+                    Badge <span class="badge badge-secondary">Public</span> means that dataset, quality test and data
+                    assembly connected with this dataset are visible and shared with all users. It has been added to let
+                    you know what results you can expect before starting the analysis. There are uploaded four public
+                    datasets:
+                    <a href="https://www.ebi.ac.uk/ena/browser/view/SRX6978160" target="_blank">Bacillus subtilis
+                        2014-3557 SRX6978160 MinION
+                    </a>
+                    ,
+                    <a href="https://www.ebi.ac.uk/ena/browser/view/SRX6494061" target="_blank">Lactobacillus reuteri
+                        SRX6494061 MinION
+                    </a>
+                    ,
+                    <a href="https://www.ebi.ac.uk/ena/browser/view/SRR10176979" target="_blank">Klebsiella pneumoniae
+                        SRX6898383 GridION
+                    </a>
+                    and
+                    <a href="https://www.ebi.ac.uk/ena/browser/view/SRR10176980" target="_blank">Klebsiella pneumoniae
+                        SRX6898382 Illumina NovaSeq 6000
+                    </a>
+                    .
+                    The data were downloaded from
+                    <a href="https://www.ebi.ac.uk/ena/browser/home" target="_blank">The European Nucleotide
+                        Archive (ENA)
+                    </a>. Note, that
+                    you can see performed public quality tests and data assemblies, and also perform your own.
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="heading6">
+                <h2 class="mb-0">
+                    <button class="btn btn-outline-light btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
+                        What tools are used in the application and how to cite them?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse6" class="collapse" aria-labelledby="heading6" data-parent="#accordionFAQ">
+                <div class="card-body justify">
+                    We have prepared a special dictionary with short description of bioinformatics tookit the to answer
+                    this question.
+                    <dl>
+                        <dt><a href="https://rrwick.github.io/Bandage/" target="_blank">Bandage</a>
+                        </dt>
+                        <dd>- a program for visualising de novo assembly graphs.</dd>
+                        <dd>Citation: Wick R.R., Schultz M.B., Zobel J. &amp; Holt K.E. (2015). Bandage: interactive
+                            visualisation of de novo genome assemblies. Bioinformatics, 31(20), 3350-3352.
+                        </dd>
+                        <dt><a href="https://github.com/OpenGene/fastp" target="_blank">Fastp</a></dt>
+                        <dd>- all-in-one preprocessing for fastq files used for paired end data.
+                        </dd>
+                        <dd>Citation: Chen, S., Zhou, Y., Chen, Y. & Gu, J., 2018. fastp: An ultra-fast all-in-one FASTQ
+                            preprocessor. Bioinformatics 34(17), pp.i884–i890.
+                        </dd>
+                        <dt><a href="http://www.bioinformatics.babraham.ac.uk/projects/fastqc"
+                               target="_blank">FastQC</a></dt>
+                        <dd>- a quality control tool for high throughput sequence data.
+                        </dd>
+                        <dt><a href="https://github.com/rrwick/Filtlong" target="_blank">Filtlong</a></dt>
+                        <dd>- filtering long reads by quality that uses It uses both read length and read identity
+                            when choosing which reads pass the filter.
+                        </dd>
+                        <dt><a href="https://github.com/fenderglass/Flye" target="_blank">Flye</a></dt>
+                        <dd>- a de novo assembler for single molecule sequencing reads, such as those roduced by PacBio
+                            and Oxford Nanopore Technologies.
+                        </dd>
+                        <dd>Citation: Yu Lin, Jeffrey Yuan, Mikhail Kolmogorov, Max W Shen, Mark Chaisson and Pavel
+                            Pevzner, &quot;Assembly of Long Error-Prone Reads Using de Bruijn Graphs&quot;, PNAS, 2016.
+                        </dd>
+                        <dt><a href="https://github.com/DerrickWood/kraken2/wiki/Manual" target="_blank">Kraken 2</a>
+                        </dt>
+                        <dd>- a taxonomic sequence classifier that assigns taxonomic labels to DNA sequences.
+                        </dd>
+                        <dd>Citation: Wood DE., Lu J. and Langmead B., 2019. Improved metagenomic analysis with Kraken
+                            2. Genome biology, 20(1), pp. 257.
+                        </dd>
+                        <dt><a href="https://github.com/jenniferlu717/KrakenTools" target="_blank">KrakenTools</a>
+                        </dt>
+                        <dd>- a suite of scripts to be used for post-analysis of Kraken.
+                        </dd>
+                        <dt><a href="https://github.com/marbl/Krona/wiki" target="_blank">Krona</a>
+                        </dt>
+                        <dd>- an interactive visualization tool for exploring the composition of metagenomes
+                        </dd>
+                        <dd>Ondov BD, Bergman NH, and Phillippy AM., 2011. Krona: Interactive metagenomic visualization in a Web
+                            browser. BMC Bioinformatics, 12(1), pp. 385.
+                        </dd>
+                        <dt><a href="https://nanoporetech.github.io/medaka/index.html" target="_blank">Medaka</a></dt>
+                        <dd>- a tool to create a consensus sequence of nanopore sequencing data.</dd>
+                        <dt><a href="https://github.com/wdecoster/nanofilt" target="_blank">NanoFilt</a></dt>
+                        <dd>- filtering and trimming of long read sequencing data.
+                        </dd>
+                        <dd>Citation: De Coster, W., D’Hert, S., Schultz, D.T., Cruts, M. and Van Broeckhoven, C., 2018.
+                            NanoPack: visualizing and processing long-read sequencing data. Bioinformatics, 34(15),
+                            pp.2666-2669.
+                        </dd>
+                        <dt><a href="https://github.com/wdecoster/NanoPlot" target="_blank">Nanoplot</a></dt>
+                        <dd>- a plotting tool for long read sequencing data and alignments.</dd>
+                        <dd>Citation: De Coster, W., D’Hert, S., Schultz, D.T., Cruts, M. and Van Broeckhoven, C., 2018.
+                            NanoPack: visualizing and processing long-read sequencing data. Bioinformatics, 34(15),
+                            pp.2666-2669.
+                        </dd>
+                        <dt><a href="https://github.com/tseemann/prokka" target="_blank">Prokka</a></dt>
+                        <dd>- a software tool to annotate bacterial, archaeal and viral genomes quickly and produce
+                            standards-compliant output files.
+                        </dd>
+                        <dd>Citation: Seemann T., 2014. Prokka: rapid prokaryotic genome annotation
+                            Bioinformatics, 30(14), pp. 2068-2069.
+                        </dd>
+                        <dt><a href="https://github.com/rrwick/Rebaler" target="_blank">Rebaler</a></dt>
+                        <dd>- a program for conducting reference-based assemblies using long reads.</dd>
+                        <dt><a href="http://quast.sourceforge.net" target="_blank">Quast</a></dt>
+                        <dd>- Quality Assessment Tool for Genome Assemblies.</dd>
+                        <dd>Citation: Mikheenko, A., Prjibelski, A., Saveliev, V., Antipov, D. and Gurevich, A., 2018.
+                            Versatile genome assembly evaluation with QUAST-LG. Bioinformatics, 34(13), pp. i142-i150.
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="heading7">
+                <h2 class="mb-0">
+                    <button class="btn btn-outline-light btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
+                        What does the consensus.fasta file contain?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse7" class="collapse" aria-labelledby="heading7" data-parent="#accordionFAQ">
+                <div class="card-body justify">
+                    The consensus sequence is the calculated order of most frequent residues, either nucleotide or amino
+                    acid (A/T/G/C), found at each position in a sequence alignment. It represents the results of
+                    multiple sequence alignments in which related sequences are compared to each other and similar
+                    sequence motifs are calculated. It can contains one or more contigs, which are sets of overlapping
+                    DNA segments that together represent a consensus region of DNA.
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="heading8">
+                <h2 class="mb-0">
+                    <button class="btn btn-outline-light btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapse8" aria-expanded="false" aria-controls="collapse8">
+                        What if I have a question about Nanoforms that I have not found an answer to anywhere?
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse8" class="collapse" aria-labelledby="heading8" data-parent="#accordionFAQ">
+                <div class="card-body justify">
+                    In this case, please <a href="mailto:m.cmil@prz.edu.pl">contact us</a>. We will be glad to answer
+                    your question.
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <h5>New dataset</h5>
+    {% crispy form %}
+
+    <div id="progress_wrap" class="progress">
+        <div id="progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+             style="width: 0;" aria-valuenow="0"
+             aria-valuemin="0"
+             aria-valuemax="100">25%
+        </div>
+    </div>
+
+    <script>
+        var fileInput = $('.custom-file-input')
+        fileInput.on("change", function () {
+            fileInput.removeClass('is-invalid')
+            $('.invalid-feedback').remove()
+        });
+        $("#upload_form").on("submit", function (event) {
+            event.preventDefault();
+            var errors = false;
+            var form = $('#upload_form')[0];
+            var formData = new FormData(form);
+            for (var [key, value] of formData.entries()) {
+                console.log(key, value);
+                if (key === 'files' && value.name === '') {
+                    errors = true;
+                }
+            }
+            if (errors) {
+                fileInput.addClass('is-invalid')
+                fileInput.after('<span class="invalid-feedback" id="error_1_id_files"><strong>This field is required.</strong></span>')
+            } else {
+                $.ajax({
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function (evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = Math.round(100 * (evt.loaded / evt.total));
+                                if (percentComplete < 1) {
+                                    percentComplete = 1;
+                                }
+                                if (percentComplete > 98) {
+                                    percentComplete = 99
+                                }
+                                var percentCompleteStr = percentComplete + '%'
+                                console.log(percentComplete)
+                                $('#progress')
+                                    .attr('aria-valuenow', percentComplete)
+                                    .css('width', percentCompleteStr)
+                                    .html(percentCompleteStr);
+                            }
+                        }, false);
+                        return xhr;
+                    },
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data, status) {
+                        window.location.href = '/dataset/' + data['id'];
+                    },
+                    type: 'POST'
+                })
+            }
+
+        })
+    </script>
+{% endblock %}

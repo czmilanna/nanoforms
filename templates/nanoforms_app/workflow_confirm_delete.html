@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="d-flex justify-content-center">
+        <form method="post">{% csrf_token %}
+            <p>Are you sure you want to delete "{{ object.name }}"?</p>
+            <div class="d-flex justify-content-center">
+                <a class="btn btn-secondary" href="javascript:history.back()">Cancel</a>
+                <input class="btn btn-danger" type="submit" value="Confirm">
+            </div>
+        </form>
+    </div>
+{% endblock %}

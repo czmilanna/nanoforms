@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+    {% load tz %}
+    <h5>Assembly results
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-success btn-sm dropdown-toggle" id="btnGroupDrop1"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span
+                    class="oi oi-spreadsheet"></span> Perform data assembly
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <a class="dropdown-item" href="/assembly/create">ONT assembly</a>
+                <a class="dropdown-item" href="/hybrid/create">Hybrid Nanopore and
+                    Illumina assembly</a>
+            </div>
+        </div>
+    </h5>
+    {% if object_list %}
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Dataset name</th>
+                <th scope="col">Quality test name</th>
+                <th scope="col">Date created</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for w in object_list %}
+                <tr>
+                    <td scope="row">{{ w.name }}
+                        {% if w.public %}
+                            <span class="badge badge-secondary">Public</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ w.get_type_display }}</td>
+                    {% if w.secondary_dataset %}
+                        <td>{{ w.dataset.name }}, {{ w.secondary_dataset.name }}</td>
+                    {% else %}
+                        <td>{{ w.dataset.name }}</td>
+                    {% endif %}
+                    {% if w.quality %}
+                        <td>{{ w.quality.name }}</td>
+                    {% else %}
+                        <td>Not performed</td>
+                    {% endif %}
+                    <td>{{ w.created_at | localtime }}</td>
+                    <td>{{ w.status }}</td>
+                    <td>
+                        {% if w.type == 'A' %}
+                            <button onclick="location.href = '/assembly/{{ w.id }}/';" type="button"
+                                    class="btn btn-outline-primary btn-sm"><span class="oi oi-document"></span> Details
+                            </button>
+                        {% elif w.type == 'H' %}
+                            <button onclick="location.href = '/hybrid/{{ w.id }}/';" type="button"
+                                    class="btn btn-outline-primary btn-sm"><span class="oi oi-document"></span> Details
+                            </button>
+                        {% endif %}
+                    <td>
+                        {% if not w.public %}
+                            <button onclick="location.href = '/workflow/{{ w.id }}/delete?next={{ request.path }}';"
+                                    type="button"
+                                    class="btn btn-outline-danger btn-sm"><span class="oi oi-trash"></span> Remove
+                            </button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        You have not performed any data assembly.
+    {% endif %}
+{% endblock %}

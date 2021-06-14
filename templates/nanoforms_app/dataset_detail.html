@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load workflow_tags %}
+{% block content %}
+
+    <h5>{{ dataset.name }} dataset
+        <button onclick="location.href = '/quality/create?dataset_id={{ dataset.id }}';" type="button"
+                class="btn btn-outline-success btn-sm"><span class="oi oi-bar-chart"></span> Perform quality test
+        </button>
+        {% if dataset.quality_workflows %}
+            <button type="button" class="btn btn-outline-info btn-sm" data-toggle="collapse"
+                    href="#collapseTests" role="button"
+                    aria-expanded="false" aria-controls="collapseTests"><span
+                    class="oi oi-collapse-down"></span>
+                Show quality tests performed on this dataset
+            </button>
+        {% endif %}
+        {% if dataset.assembly_workflows %}
+            <button type="button" class="btn btn-outline-info btn-sm" data-toggle="collapse"
+                    href="#collapseAssemblies" role="button"
+                    aria-expanded="false" aria-controls="collapseAssemblies"><span
+                    class="oi oi-collapse-down"></span>
+                Show data assemblies performed on this dataset
+            </button>
+        {% endif %}
+        {% if not dataset.public %}
+            <button onclick="location.href = '/dataset/{{ dataset.id }}/delete?next=/dataset/';" type="button"
+                    class="btn btn-outline-danger btn-sm"><span class="oi oi-trash"></span> Remove
+            </button>
+        {% endif %}
+    </h5>
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">Number of files</th>
+                <th scope="col">Total size</th>
+                <th scope="col">Date created</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ dataset.get_type_display }}</td>
+                <td>{{ dataset.number_of_files }}</td>
+                <td>{{ dataset.size }}</td>
+                <td>{{ dataset.created_at }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% if dataset.quality_workflows %}
+        <div class="collapse" id="collapseTests">
+            <br/>
+            <div class="card card-body">
+                <h6>Quality tests</h6>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Date created</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for quality in dataset.quality_workflows %}
+                        <tr>
+                            <td scope="row">{{ quality.name }}</td>
+                            <td scope="row">{{ quality.created_at }}</td>
+                            <td scope="row">{{ quality.status }}</td>
+                            <td>
+                                <button onclick="location.href = '/quality/{{ quality.id }}/';" type="button"
+                                        class="btn btn-outline-primary btn-sm"><span class="oi oi-bar-chart"></span>
+                                    Details
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if dataset.assembly_workflows %}
+        <div class="collapse" id="collapseAssemblies">
+            <div class="card card-body">
+                <h6>Data assemblies</h6>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Quality test name</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for assembly in dataset.assembly_workflows %}
+                        <tr>
+                            <td scope="row">{{ assembly.name }}</td>
+                            <td scope="row">{{ assembly.parent }}</td>
+                            <td scope="row">{{ assembly.status }}</td>
+                            <td>
+                                <button onclick="location.href = '/assembly/{{ assembly.id }}/';" type="button"
+                                        class="btn btn-outline-primary btn-sm"><span class="oi oi-bar-chart"></span>
+                                    Details
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    <br/>
+    <h6>Files</h6>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Size</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for file in dataset.files %}
+            <tr>
+                <td scope="row">{{ file.name }}</td>
+                <td>{{ file.size }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

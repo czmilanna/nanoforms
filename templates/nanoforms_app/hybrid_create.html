@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <h5>New hybrid assembly</h5>
+    {% crispy form %}
+
+    <script>
+        $('#hybrid_create').submit(function () {
+            $("#hybrid_create :disabled").removeAttr('disabled');
+        });
+
+        $('#id_secondary_dataset').on('change', function () {
+            $('#id_illumina_read1').load('/dataset/' + this.value + '/file_options/0')
+            $('#id_illumina_read2').load('/dataset/' + this.value + '/file_options/1')
+        });
+    </script>
+    <style>
+        .asteriskField {
+            margin-left: 5px;
+        }
+
+        .info:after {
+            content: '?';
+            display: inline-block;
+            font-weight: bold;
+            text-align: center;
+            width: 16px;
+            font-size: 11px;
+            border-radius: 50%;
+            background: gray;
+            color: white;
+        }
+    </style>
+{% endblock %}

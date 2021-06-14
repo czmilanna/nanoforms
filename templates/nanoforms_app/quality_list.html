@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+    {% load tz %}
+    <h5>Quality tests
+        <button onclick="location.href = '/quality/create';" type="button"
+                class="btn btn-outline-success btn-sm"><span class="oi oi-bar-chart"></span> Perform quality test
+        </button>
+    </h5>
+    {% if object_list %}
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Dataset name</th>
+                <th scope="col">Date created</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for w in object_list %}
+                <tr>
+                    <td scope="row">{{ w.name }}
+                        {% if w.public %}
+                            <span class="badge badge-secondary">Public</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ w.dataset.name }}</td>
+                    <td>{{ w.created_at | localtime }}</td>
+                    <td>{{ w.status }}</td>
+                    <td>
+                        <button onclick="location.href = '/quality/{{ w.id }}/';" type="button"
+                                class="btn btn-outline-primary btn-sm"><span class="oi oi-document"></span> Details
+                        </button>
+                    </td>
+                    <td>
+                        {% if not w.public %}
+                            <button onclick="location.href = '/workflow/{{ w.id }}/delete?next={{ request.path }}';"
+                                    type="button"
+                                    class="btn btn-outline-danger btn-sm"><span class="oi oi-trash"></span> Remove
+                            </button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        You don't have any quality test performed.
+    {% endif %}
+{% endblock %}

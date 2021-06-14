@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load workflow_tags %}
+{% block content %}
+    <style>
+
+        .btn.disabled {
+            pointer-events: auto;
+        }
+    </style>
+    <h4>Quality test: {{ workflow.name }}
+        <button onclick="location.href = '/dataset/{{ workflow.dataset.id }}';" type="button"
+                class="btn btn-outline-secondary btn-sm"><span class="oi oi-file"></span> Go to dataset
+        </button>
+        {% if workflow.succeeded %}
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-success btn-sm dropdown-toggle" id="btnGroupDrop1"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span
+                        class="oi oi-spreadsheet"></span> Perform data assembly
+                </button>
+                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                    {% if workflow.dataset.type == 'N' %}
+                        <a class="dropdown-item" href="/assembly/create?quality_id={{ workflow.id }}">ONT assembly</a>
+                    {% endif %}
+                    <a class="dropdown-item" href="/hybrid/create?quality_id={{ workflow.id }}">Hybrid Nanopore and
+                        Illumina assembly</a>
+                </div>
+            </div>
+            {% if workflow.assemblies %}
+                <button type="button" class="btn btn-outline-info btn-sm" data-toggle="collapse"
+                        href="#collapseAssemblies" role="button"
+                        aria-expanded="false" aria-controls="collapseAssemblies"><span
+                        class="oi oi-collapse-down"></span>
+                    Show assemblies performed on this quality test
+                </button>
+            {% endif %}
+        {% else %}
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top"
+                        title="Wait for the results of analysis. Button will be active after the Quality test is Succeded."
+                        disabled><span class="oi oi-spreadsheet"></span> Perform data assembly
+                </button>
+            </div>
+        {% endif %}
+        {% if not workflow.public %}
+            <button onclick="location.href = '/workflow/{{ workflow.id }}/delete?next=/quality/';"
+                    type="button"
+                    class="btn btn-outline-danger btn-sm"><span class="oi oi-trash"></span> Remove
+            </button>
+        {% endif %}
+    </h4>
+
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Workflow status</th>
+                <th scope="col">Dataset name</th>
+                <th scope="col">Date created</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ workflow.status }}</td>
+                <td>{{ workflow.dataset }}</td>
+                <td>{{ workflow.created_at }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <div id="timing" style="padding: 20px">
+        {% include "loader.html" %}
+    </div>
+    <script>
+        $("#timing").load("/timing/{{ workflow.id }}");
+    </script>
+
+    {% if workflow.running %}
+        <span id="step" style="padding-left: 20px"></span>
+        <script>
+            $("#step").load("/step/{{ workflow.id }}");
+        </script>
+    {% endif %}
+
+
+    <span id="status" style="padding-left: 20px"></span>
+    <script>
+        $("#status").load("/status/{{ workflow.id }}");
+    </script>
+
+    {% if workflow.succeeded %}
+        {% if workflow.assemblies %}
+            <div class="collapse" id="collapseAssemblies">
+                <div class="card card-body">
+                    <h6>Assemblies</h6>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for a in workflow.assemblies %}
+                            <tr>
+                                <td scope="row">{{ a.name }}</td>
+                                <td scope="row">{{ a.created_at }}</td>
+                                <td scope="row">{{ a.status }}</td>
+                                <td>
+                                    <button onclick="location.href = '/assembly/{{ a.id }}/';" type="button"
+                                            class="btn btn-outline-secondary btn-sm"><span
+                                            class="oi oi-bar-chart"></span>
+                                        Details
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row">
+        <div class="col-4 col-s-4">
+            <h5>Quality assessment</h5>
+        </div>
+        <div class="col-4 col-s-4">
+        </div>
+        <div class="col-4 col-s-4">
+            <h6>Download the reports:
+                <a href="/quality-{{ workflow.id }}.zip"
+                   download class="btn btn-success" role="button">
+                    <span class="iconify" data-icon="oi:data-transfer-download" data-inline="false"></span>
+                </a></h6>
+        </div>
+        {% if workflow.dataset.type == 'N' %}
+            <div id="nanoplot">
+                {% include "loader.html" %}
+            </div>
+            <script>
+                $("#nanoplot").load("/nanoplot/{{ workflow.id }}");
+            </script>
+        {% elif workflow.dataset.type == 'I' %}
+            <div style="padding-left: 20px;">
+                {% workflow_output_text workflow.id 'prz_prepare_illumina_data.out_txt' 'fastqc_data.txt' 4 10 %}
+                <br/>
+                <img alt=""
+                     src="{% workflow_output_link workflow.id 'prz_prepare_illumina_data.adapter_content' 'adapter_content.png' %}"/>
+                <br/>
+                <img alt=""
+                     src="{% workflow_output_link workflow.id 'prz_prepare_illumina_data.duplication_levels' 'duplication_levels.png' %}"/>
+                <br/>
+                <img alt=""
+                     src="{% workflow_output_link workflow.id 'prz_prepare_illumina_data.per_base_n_content' 'per_base_n_content.png' %}"/>
+                <br/>
+                <img alt=""
+                     src="{% workflow_output_link workflow.id 'prz_prepare_illumina_data.per_base_quality' 'per_base_quality.png' %}"/>
+                <br/>
+                <img alt=""
+                     src="{% workflow_output_link workflow.id 'prz_prepare_illumina_data.per_base_sequence_content' 'per_base_sequence_content.png' %}"/>
+                <br/>
+                <img alt=""
+                     src="{% workflow_output_link workflow.id 'prz_prepare_illumina_data.per_sequence_gc_content' 'per_sequence_gc_content.png' %}"/>
+                <br/>
+                <img alt=""
+                     src="{% workflow_output_link workflow.id 'prz_prepare_illumina_data.per_sequence_quality' 'per_sequence_quality.png' %}"/>
+                <br/>
+                <img alt=""
+                     src="{% workflow_output_link workflow.id 'prz_prepare_illumina_data.per_tile_quality' 'per_tile_quality.png' %}"/>
+                <br/>
+                <img alt=""
+                     src="{% workflow_output_link workflow.id 'prz_prepare_illumina_data.sequence_length_distribution' 'sequence_length_distribution.png' %}"/>
+            </div>
+        {% endif %}
+    {% elif workflow.submitted or workflow.running %}
+        <script>
+            setTimeout(function () {
+                location.reload();
+            }, {{ workflow.refresh_after_ms }})
+        </script>
+    {% elif workflow.failed %}
+        <div style="padding-left: 20px">
+            {{ workflow.failure }}
+        </div>
+    {% endif %}
+<style>
+    .dataframe {
+        margin-bottom: 40px;
+    }
+
+    #plots {
+        margin-bottom: 40px;
+    }
+
+</style>
+
+{% endblock %}

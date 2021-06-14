@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <h5>New data assembly</h5>
+    {% crispy form %}
+
+    <script>
+        $('#assembly_create').submit(function () {
+            $("#assembly_create :disabled").removeAttr('disabled');
+        });
+    </script>
+    <style>
+        .asteriskField {
+            margin-left: 5px;
+        }
+
+        .info:after {
+            content: '?';
+            display: inline-block;
+            font-weight: bold;
+            text-align: center;
+            width: 16px;
+            font-size: 11px;
+            border-radius: 50%;
+            background: gray;
+            color: white;
+        }
+    </style>
+{% endblock %}

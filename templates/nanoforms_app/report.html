@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load workflow_tags %}
+{% block content %}
+    {% if workflow.succeeded %}
+        <h2>Report</h2>
+
+        <h4>NanoPlot summary statistics</h4>
+        <div>
+            {% workflow_nanoplot_report workflow.parent.id 'prz_prepare_data.htmls' 'NanoPlot-report.html' %}
+        </div>
+        <div>
+            <h6>Quast report</h6>
+            {% workflow_output_text workflow.id 'prz_data_assembly.reports' 'report.txt' 0 1 %}
+            {% workflow_quast_report workflow.id 'prz_data_assembly.report_html' 'report.html' %}
+        </div>
+        <h6>Assembly graph</h6>
+        <div class="d-flex justify-content-center">
+            <img alt="Assembly graph" style="width: 40%; height: 40%"
+                 src="{% workflow_output_link workflow.id 'prz_data_assembly.assembly_image' 'assembly_image.jpg' %}"/>
+        </div>
+    {% endif %}
+{% endblock %}

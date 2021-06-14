@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load workflow_tags %}
+{% block content %}
+    <h4>Data assembly: {{ workflow.name }}
+
+        <button onclick="location.href = '/dataset/{{ workflow.dataset.id }}';" type="button"
+                class="btn btn-outline-secondary btn-sm"><span class="oi oi-file"></span> Go to dataset
+        </button>
+        <button onclick="location.href = '/quality/{{ workflow.quality.id }}';" type="button"
+                class="btn btn-outline-secondary btn-sm"><span class="oi oi-bar-chart"></span> Go to quality test
+        </button>
+        {% if not workflow.public %}
+            <button onclick="location.href = '/workflow/{{ workflow.id }}/delete?next=/assembly/';"
+                    type="button"
+                    class="btn btn-outline-danger btn-sm"><span class="oi oi-trash"></span> Remove
+            </button>
+        {% endif %}
+    </h4>
+
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Status</th>
+                <th scope="col">Dataset name</th>
+                <th scope="col">Quality test name</th>
+                <th scope="col">Date created</th>
+                <th>
+                    <button class="btn btn-outline-info btn-sm" data-toggle="collapse" href="#collapseExample" role="button"
+                       aria-expanded="false" aria-controls="collapseExample">
+                        Display settings <span class="oi oi-chevron-bottom"></span>
+                    </button>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr id="metadata">
+                <script>
+                    $("#metadata").load("/metadata/{{ workflow.id }}/");
+                </script>
+            </tr>
+            </tbody>
+        </table>
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+                <table class="table table-info">
+                    <thead>
+                    <tr>
+                        <th scope="col">Nanofilt -q</th>
+                        <th scope="col">Nanofilt -headcrop</th>
+                        <th scope="col">Filtlong --min_length</th>
+                        <th scope="col">Filtlong --target_bases</th>
+                        <th scope="col">Prokka --genus</th>
+                        <th scope="col">Prokka --species</th>
+                        <th scope="col">Prokka --strain</th>
+                        <th scope="col">Prokka --plasmid</th>
+                        <th scope="col">Flye -g</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr id="assembly_details">
+                        <script>
+                            $("#assembly_details").load("/assembly_details/{{ workflow.id }}/");
+                        </script>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="timing" style="padding: 20px">
+        {% include "loader.html" %}
+    </div>
+    <script>
+        $("#timing").load("/timing/{{ workflow.id }}");
+    </script>
+
+    {% if workflow.running %}
+        <span id="step" style="padding-left: 20px"></span>
+        <script>
+            $("#step").load("/step/{{ workflow.id }}");
+        </script>
+    {% endif %}
+
+    <span id="status" style="padding-left: 20px"></span>
+    <script>
+        $("#status").load("/status/{{ workflow.id }}");
+    </script>
+
+    {% if workflow.succeeded %}
+        <div class="mg1">
+            <div class="row">
+                <div class="col-4 col-s-4">
+                    <h5>Assembly output</h5>
+                </div>
+                <div class="col-4 col-s-4">
+                    <h6>Download the consensus file:
+                        <a href="{% workflow_output_link workflow.id 'prz_data_assembly.consensus_fasta' 'consensus.fasta' %}"
+                           download class="btn btn-success" role="button">
+                            <span class="iconify" data-icon="oi:data-transfer-download" data-inline="false"></span>
+                        </a></h6>
+                </div>
+                <div class="col-4 col-s-4">
+                    <h6>Download the reports:
+                        <a href="/report-{{ workflow.id }}.zip"
+                           download class="btn btn-success" role="button">
+                            <span class="iconify" data-icon="oi:data-transfer-download" data-inline="false"></span>
+                        </a></h6>
+                </div>
+            </div>
+
+            <h6>Assembly QC with QUAST</h6>
+            <div id="quast">
+                {% include "loader.html" %}
+            </div>
+            <script>
+                $("#quast").load("/quast/{{ workflow.id }}");
+            </script>
+        </div>
+
+        <h6>Assembly Visualization with Bandage</h6>
+        <div class="d-flex justify-content-center">
+            <img src="/download/{{ workflow.id }}/prz_data_assembly.assembly_image/assembly_image.jpg"
+                 style="width: 50%; height: 50%" alt="Assembly graph"/>
+        </div>
+
+        <h6>Annotation with Prokka</h6>
+        <div>
+            {% workflow_output_text workflow.id 'prz_data_assembly.prokka_txt' 'prokka.txt' %}
+        </div>
+
+    {% elif workflow.submitted or workflow.running %}
+        <script>
+            setTimeout(function () {
+                location.reload();
+            }, {{ workflow.refresh_after_ms }})
+        </script>
+    {% elif workflow.failed %}
+        <div style="padding-left: 20px">
+            {{ workflow.failure }}
+        </div>
+
+    {% endif %}
+    </div>
+    <style>
+        .plots {
+            width: 90%;
+            margin-left: 10%;
+
+        div.mg1 {
+            margin-left: 15px;
+
+        }
+
+    </style>
+
+{% endblock %}
+
+

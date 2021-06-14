@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="justify">
+        <h5>
+           NanoForms: an intuitive and integrated web server for processing and analysis
+            of raw data from prokaryotic genomes, from Oxford Nanopore NGS technology.
+        </h5>
+        <p>
+        <div class="d-flex justify-content-center">
+            {% load static %}
+            <img src="{% static "nanoforms_app/img/diagram_1.png" %}" alt="My image" class="center" style="width: 50%; height: 50%" >
+        </div>
+        </p>
+    </div>
+{% endblock %}

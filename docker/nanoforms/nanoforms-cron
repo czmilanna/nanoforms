@@ -1,0 +1,1 @@
+*/1 * * * * /usr/bin/python3.7 /code/manage.py cromwell_cleanup >> /var/log/cron.log 2>&1
