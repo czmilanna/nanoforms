@@ -18,7 +18,7 @@ class OwnerOrAdminOrPublicAccessMixin(BaseDetailView):
     def dispatch(self, request, *args, **kwargs):
         o = self.get_object()
 
-        if o.user == self.request.user or request.user.is_superuser or o.public:
+        if o.public or o.user == self.request.user or request.user.is_superuser:
             return super(OwnerOrAdminOrPublicAccessMixin, self).dispatch(request, *args, **kwargs)
 
         return HttpResponseForbidden()
