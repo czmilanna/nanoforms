@@ -15,10 +15,11 @@ from nanoforms_app.convert import unpack_tars, gzip_fastq, remove_files_with_ext
     unpack_zips
 from nanoforms_app.mixin import OwnerAccessMixin, OwnerOrAdminOrPublicAccessMixin
 from nanoforms_app.models import Dataset
+from nanoforms_app.access import has_access_filter
 
 
 def get_dataset_filter(request, id=None):
-    dataset_filter = Dataset.objects.filter(Q(user=request.user) | Q(public=True)).order_by('created_at')
+    dataset_filter = Dataset.objects.filter(has_access_filter(request)).order_by('created_at')
     if id:
         return dataset_filter.filter(id=id).first()
     else:
@@ -26,8 +27,8 @@ def get_dataset_filter(request, id=None):
 
 
 def get_ref_dataset_filter(request, id=None):
-    dataset_filter = Dataset.objects.filter(
-        Q(user=request.user) | Q(public=True) | Q(type=Dataset.DatasetType.NANOPORE)).order_by('created_at')
+    dataset_filter = Dataset.objects.filter(has_access_filter(request) | Q(type=Dataset.DatasetType.NANOPORE)) \
+        .order_by('created_at')
     if id:
         return dataset_filter.filter(id=id).first()
     else:

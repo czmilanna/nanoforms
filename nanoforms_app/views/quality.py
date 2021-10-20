@@ -15,6 +15,7 @@ from nanoforms_app.cromwell import workflow_quality_run, workflow_illumina_quali
 from nanoforms_app.mixin import OwnerOrAdminOrPublicAccessMixin
 from nanoforms_app.models import Workflow, Dataset
 from nanoforms_app.views.dataset import get_dataset_filter
+from nanoforms_app.access import has_access_filter
 
 
 class QualityListView(generic.ListView):
@@ -23,7 +24,7 @@ class QualityListView(generic.ListView):
 
     def get_queryset(self):
         queryset = super(QualityListView, self).get_queryset()
-        queryset = queryset.filter(Q(user=self.request.user) | Q(public=True)).filter(
+        queryset = queryset.filter(has_access_filter(self.request) | Q(public=True)).filter(
             type=Workflow.WorkflowType.QUALITY).order_by('created_at')
         return queryset
 

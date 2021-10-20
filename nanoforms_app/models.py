@@ -16,6 +16,7 @@ from threadlocals.threadlocals import get_current_request
 from nanoforms.settings import BASE_UPLOAD_DIR, CROMWELL_EXECUTION_DIR
 from nanoforms_app.convert import sizeof_fmt
 from nanoforms_app.cromwell import workflow_metadata, workflow_outputs, workflow_abort
+from nanoforms_app.access import has_access_filter
 
 
 class Base(models.Model):
@@ -46,12 +47,12 @@ class Dataset(Base):
 
     def quality_workflows(self):
         request = get_current_request()
-        access = Q(user=request.user) | Q(public=True)
+        access = has_access_filter(request)
         return self.workflow_set.filter(access & Q(type=Workflow.WorkflowType.QUALITY)).order_by('created_at')
 
     def assembly_workflows(self):
         request = get_current_request()
-        access = Q(user=request.user) | Q(public=True)
+        access = has_access_filter(request)
         return self.workflow_set.filter(access & Q(type=Workflow.WorkflowType.ASSEMBLY)).order_by('created_at')
 
     def files(self):
@@ -115,7 +116,7 @@ class Workflow(Base):
 
     def assemblies(self):
         request = get_current_request()
-        access = Q(user=request.user) | Q(public=True)
+        access = has_access_filter(request)
         return self.workflow_set.filter(access & Q(type=Workflow.WorkflowType.ASSEMBLY)).order_by('created_at')
 
     @property
