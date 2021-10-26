@@ -6,6 +6,5 @@ django-registration==3.1.1
 django-crispy-forms==1.9.2
 requests==2.24.0
 beautifulsoup4==4.9.2
-watchgod==0.6
 django-active-link==0.1.6
 django-threadlocals==0.10

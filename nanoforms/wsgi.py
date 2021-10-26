@@ -16,5 +16,5 @@ from nanoforms_app.cromwell_watcher import CromwellWatcher
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nanoforms.settings')
 
 application = get_wsgi_application()
-for workload_name in ['prz_prepare_data', 'prz_data_assembly', 'prz_hybrid_assembly']:
-    CromwellWatcher.run(workload_name)
+
+CromwellWatcher.run()
