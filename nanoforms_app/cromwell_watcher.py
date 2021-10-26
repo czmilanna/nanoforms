@@ -15,7 +15,7 @@ class CromwellWatcher:
                 from nanoforms_app.models import Workflow
                 from nanoforms_app.cromwell import workflow_metadata
 
-                running_workflows = Workflow.objects.filter(status='Running')
+                running_workflows = Workflow.objects.filter(status__in=['Submitted', 'Running'])
                 for workflow in running_workflows:
                     metadata = workflow_metadata(workflow.id)
                     cromwell_status = metadata['status']
