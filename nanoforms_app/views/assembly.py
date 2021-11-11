@@ -1,9 +1,9 @@
+import glob
 import mimetypes
 import os
 import zipfile
 from wsgiref.util import FileWrapper
 from zipfile import ZipFile
-import glob
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -14,11 +14,11 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 
+from nanoforms_app.access import has_access_filter
 from nanoforms_app.cromwell import workflow_data_assembly
 from nanoforms_app.mixin import OwnerOrAdminOrPublicAccessMixin
 from nanoforms_app.models import Workflow, Dataset
 from nanoforms_app.views.dataset import get_dataset_filter
-from nanoforms_app.access import has_access_filter
 
 
 class AssemblyListView(generic.ListView):
@@ -27,7 +27,7 @@ class AssemblyListView(generic.ListView):
 
     def get_queryset(self):
         queryset = super(AssemblyListView, self).get_queryset()
-        queryset = queryset.filter(has_access_filter(self.request)| Q(public=True)).filter(
+        queryset = queryset.filter(has_access_filter(self.request) | Q(public=True)).filter(
             Q(type=Workflow.WorkflowType.ASSEMBLY) | Q(type=Workflow.WorkflowType.HYBRID)).order_by('created_at')
         return queryset
 
@@ -123,7 +123,7 @@ class AssemblyCreateView(generic.FormView):
             'prz_data_assembly.nanofilt.headcrop': int(form.data['nanofilt_headcrop']),
             'prz_data_assembly.filtlong.min_length': int(form.data['filtlong_min_length']),
             'prz_data_assembly.filtlong.target_bases': int(form.data['filtlong_target_bases']),
-            'prz_data_assembly.prokka.genus':  f" --genus {prokka_genus} " if prokka_genus else ' ',
+            'prz_data_assembly.prokka.genus': f" --genus {prokka_genus} " if prokka_genus else ' ',
             'prz_data_assembly.prokka.species': f" --species {prokka_species} " if prokka_species else ' ',
             'prz_data_assembly.prokka.strain': f" --strain {prokka_strain} " if prokka_strain else ' ',
             'prz_data_assembly.prokka.plasmid': f" --plasmid {prokka_plasmid} " if prokka_plasmid else ' '
@@ -141,12 +141,14 @@ class AssemblyDetailView(OwnerOrAdminOrPublicAccessMixin, generic.DetailView):
     template_name = 'nanoforms_app/assembly_detail.html'
 
 
-def addFolderToZip(myZipFile, folder, prefix=''):
-    for file in glob.glob(folder + "/*"):
-        if os.path.isfile(file):
-            myZipFile.write(file, prefix + os.path.basename(file), zipfile.ZIP_DEFLATED)
-        elif os.path.isdir(file):
-            addFolderToZip(myZipFile, file, prefix + os.path.basename(file))
+def add_folder_to_zip(myZipFile, folder, prefix=''):
+    if folder:
+        for file in glob.glob(folder + "/*"):
+            next_folder = os.path.join(prefix, os.path.basename(file))
+            if os.path.isfile(file):
+                myZipFile.write(file, next_folder, zipfile.ZIP_DEFLATED)
+            elif os.path.isdir(file):
+                add_folder_to_zip(myZipFile, file, next_folder)
 
 
 def download_assembly_report(request, workflow_id):
@@ -160,8 +162,8 @@ def download_assembly_report(request, workflow_id):
     zipfile.write(o.get('prz_data_assembly.assembly_image'), 'assembly-image-bandage/assembly_image.jpg')
     zipfile.write(o.get('prz_data_assembly.assembly_graph'), 'assembly-image-bandage/assembly_graph.gfa')
     zipfile.write(o.get('prz_data_assembly.consensus_fasta'), 'consensus-file/consensus.fasta')
-    addFolderToZip(zipfile, o.get('prz_data_assembly.quast_logs'), 'assembly-evaluation-quast/')
-    addFolderToZip(zipfile, o.get('prz_data_assembly.prokka_logs'), 'genome-annotation-prokka/')
+    add_folder_to_zip(zipfile, o.get('prz_data_assembly.quast_logs'), 'assembly-evaluation-quast/')
+    add_folder_to_zip(zipfile, o.get('prz_data_assembly.prokka_logs'), 'genome-annotation-prokka/')
     response = FileResponse(FileWrapper(open(file_name, 'rb')))
     content_type, encoding = mimetypes.guess_type(file_name)
     response['Content-Type'] = content_type or 'application/octet-stream'

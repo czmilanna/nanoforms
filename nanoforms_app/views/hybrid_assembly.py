@@ -1,7 +1,7 @@
+import glob
 import mimetypes
 import os
 import zipfile
-import glob
 from wsgiref.util import FileWrapper
 from zipfile import ZipFile
 
@@ -133,13 +133,14 @@ class HybridAssemblyDetailView(OwnerOrAdminOrPublicAccessMixin, generic.DetailVi
     template_name = 'nanoforms_app/hybrid_detail.html'
 
 
-def addFolderToZip(myZipFile, folder, prefix=''):
+def add_folder_to_zip(myZipFile, folder, prefix=''):
     if folder:
         for file in glob.glob(folder + "/*"):
+            next_folder = os.path.join(prefix, os.path.basename(file))
             if os.path.isfile(file):
-                myZipFile.write(file, prefix + os.path.basename(file), zipfile.ZIP_DEFLATED)
+                myZipFile.write(file, next_folder, zipfile.ZIP_DEFLATED)
             elif os.path.isdir(file):
-                addFolderToZip(myZipFile, file, prefix + os.path.basename(file))
+                add_folder_to_zip(myZipFile, file, next_folder)
 
 
 def download_hybrid_report(request, workflow_id):
@@ -155,8 +156,8 @@ def download_hybrid_report(request, workflow_id):
     zipfile.write(o.get('prz_hybrid_assembly.consensus'), 'hybrid-assembly-unicycler/consensus.fasta')
     zipfile.write(o.get('prz_hybrid_assembly.assembly_image'), 'assembly-image-bandage/assembly_image.jpg')
     zipfile.write(o.get('prz_hybrid_assembly.unicycler_graph'), 'assembly-image-bandage/consensus.gfa')
-    addFolderToZip(zipfile, o.get('prz_hybrid_assembly.quast_logs'), 'assembly-evaluation-quast/')
-    addFolderToZip(zipfile, o.get('prz_hybrid_assembly.prokka_logs'), 'genome-annotation-prokka/')
+    add_folder_to_zip(zipfile, o.get('prz_hybrid_assembly.quast_logs'), 'assembly-evaluation-quast/')
+    add_folder_to_zip(zipfile, o.get('prz_hybrid_assembly.prokka_logs'), 'genome-annotation-prokka/')
     response = FileResponse(FileWrapper(open(file_name, 'rb')))
     content_type, encoding = mimetypes.guess_type(file_name)
     response['Content-Type'] = content_type or 'application/octet-stream'
