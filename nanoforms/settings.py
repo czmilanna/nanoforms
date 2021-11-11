@@ -17,12 +17,13 @@ SELF_URL = os.environ.get('SELF_URL', 'http://localhost:8000')
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 BASE_STORAGE_DIR = os.environ.get('BASE_STORAGE_DIR', '/srv/nanoporedev/')
-BASE_UPLOAD_DIR = os.environ.get('BASE_UPLOAD_DIR', BASE_STORAGE_DIR + 'upload/')
+BASE_UPLOAD_DIR = os.environ.get('BASE_UPLOAD_DIR', os.path.join(BASE_STORAGE_DIR, 'upload/'))
 WDL_DIR = BASE_DIR.joinpath('wdl')
 
 pathlib.Path(BASE_UPLOAD_DIR).mkdir(parents=True, exist_ok=True)
 
-CROMWELL_EXECUTION_DIR = os.environ.get('CROMWELL_EXECUTION_DIR', BASE_STORAGE_DIR + 'cromwell-executions/')
+CROMWELL_EXECUTION_DIR = os.environ.get('CROMWELL_EXECUTION_DIR',
+                                        os.path.join(BASE_STORAGE_DIR, 'cromwell-executions/'))
 CROMWELL_URL = os.environ.get('CROMWELL_URL', 'http://127.0.0.1:7338')
 
 # # Static files (CSS, JavaScript, Images)
@@ -110,7 +111,7 @@ DATABASES = {
         'PORT': os.environ['POSTGRES_PORT']
     } if os.environ.get('POSTGRES_HOST') else {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_STORAGE_DIR + 'db.sqlite3',
+        'NAME': os.path.join(BASE_STORAGE_DIR, 'db.sqlite3')
     }
 }
 
