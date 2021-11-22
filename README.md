@@ -1,26 +1,43 @@
 # Nanoforms
 
-### Requirements
-* linux
-* docker
-* docker-compose
-* make
+## Minimal Requirements
 
-### Deploy
-Change `docker-compose.env` file and run below command:
+### Minimal Software Requirements
+* Linux, recommended [Ubuntu 20.04 LTS](https://ubuntu.com/download/server)
+* [Docker](https://www.docker.com/get-started)
+* [docker-compose](https://docs.docker.com/compose/install/)
+* [Make](https://www.gnu.org/software/make/)
+
+### Minimal Hardware Requirements
+* Processor: 	8 core 64bit
+* Memory:		64GB RAM
+* Disk Space:	1TB
+
+
+
+## Deployment
+
+### Step 1. Building images and deploying containers
+Change `CHANGE_ME` secrets in `docker-compose.env` file and run below command:
+
 ```shell
-make deploy
+sudo make deploy
 ```
-App should be accessible on http://127.0.0.1:7337/
 
-### Admin User creation
+### Step 2. Admin User creation
 Run below command:
 ```shell
-make create_super_user
+sudo make create_super_user
 ```
 
-### Destroy
+### Step 3. Accessing the Application
+The application should be available at http://127.0.0.1:7337/
+
+
+
+
+## Removal
 Run below command:
 ```shell
-make deploy
+sudo make destroy
 ```
