@@ -96,7 +96,7 @@
                 <h5>Assembly output</h5>
             </div>
             <div class="col-4 col-s-4">
-                <h6>Download the consensus file:
+                <h6>Download the assembly file:
                     <a href="{% workflow_output_link workflow.id 'prz_hybrid_assembly.consensus' 'assembly.fasta' %}"
                        download class="btn btn-success" role="button">
                         <span class="iconify" data-icon="oi:data-transfer-download" data-inline="false"></span>
@@ -125,6 +125,9 @@
             <img src="/download/{{ workflow.id }}/prz_hybrid_assembly.assembly_image/assembly_image.jpg"
                  style="width: 50%; height: 50%" alt="Assembly graph"/>
         </div>
+        <a href="https://rrwick.github.io/Bandage/" target="_blank">Output description</a>
+        </br>
+        </br>
 
         <h6>Annotation with Prokka</h6>
         <div>

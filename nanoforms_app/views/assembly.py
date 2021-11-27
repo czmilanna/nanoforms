@@ -161,7 +161,7 @@ def download_assembly_report(request, workflow_id):
     zipfile = ZipFile(file_name, mode='a')
     zipfile.write(o.get('prz_data_assembly.assembly_image'), 'assembly-image-bandage/assembly_image.jpg')
     zipfile.write(o.get('prz_data_assembly.assembly_graph'), 'assembly-image-bandage/assembly_graph.gfa')
-    zipfile.write(o.get('prz_data_assembly.consensus_fasta'), 'consensus-file/consensus.fasta')
+    zipfile.write(o.get('prz_data_assembly.consensus_fasta'), 'assembly.fasta')
     add_folder_to_zip(zipfile, o.get('prz_data_assembly.quast_logs'), 'assembly-evaluation-quast/')
     add_folder_to_zip(zipfile, o.get('prz_data_assembly.prokka_logs'), 'genome-annotation-prokka/')
     response = FileResponse(FileWrapper(open(file_name, 'rb')))

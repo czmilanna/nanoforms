@@ -153,7 +153,7 @@ def download_hybrid_report(request, workflow_id):
     zipfile = ZipFile(file_name, mode='a')
     zipfile.write(o.get('prz_hybrid_assembly.krona_report'), 'taxon-visual/kraken2_krona_report.html')
     zipfile.write(o.get('prz_hybrid_assembly.kraken2_report'), 'taxon-visual/kraken2_report')
-    zipfile.write(o.get('prz_hybrid_assembly.consensus'), 'hybrid-assembly-unicycler/consensus.fasta')
+    zipfile.write(o.get('prz_hybrid_assembly.consensus'), 'assembly.fasta')
     zipfile.write(o.get('prz_hybrid_assembly.assembly_image'), 'assembly-image-bandage/assembly_image.jpg')
     zipfile.write(o.get('prz_hybrid_assembly.unicycler_graph'), 'assembly-image-bandage/consensus.gfa')
     add_folder_to_zip(zipfile, o.get('prz_hybrid_assembly.quast_logs'), 'assembly-evaluation-quast/')
