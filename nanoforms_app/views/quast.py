@@ -4,6 +4,17 @@ from django.utils.safestring import mark_safe
 
 from nanoforms_app.cromwell import workflow_outputs
 
+quast_mappings = {
+    "#seq_name": "Contig/scaffold id",
+    "length": "Length",
+    "cov.": "Coverage",
+    "circ.": "Is circular, (Y)es or (N)o",
+    "repeat": "Is repetitive, (Y)es or (N)o",
+    "mult.": "Multiplicity (based on coverage)",
+    "alt_group": "Alternative group",
+    "graph_path": "Graph path",
+}
+
 
 def quast(request, workflow_id):
     outputs = workflow_outputs(workflow_id).get('outputs', {})
@@ -33,9 +44,9 @@ def quast(request, workflow_id):
         return ''
     with open(path1, 'r') as f:
         line = f.readline()
-        header = '<table style="width:50%"><tr>'
+        header = '<table style="width:100%"><tr>'
         for word in line.split('\t'):
-            header += '<th>' + word + '</th>'
+            header += '<th>' + quast_mappings.get(word.strip(), word) + '</th>'
         header += '</tr>'
         lines = f.readlines()
         content = ''
@@ -45,7 +56,7 @@ def quast(request, workflow_id):
                 content += '<td>' + word + '</td>'
             content += '</tr>'
         content += '</table>'
-        content = header + content + '</br>'
+        content = header + content
 
     scripts_to_fix = """
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/litera/bootstrap.min.css"

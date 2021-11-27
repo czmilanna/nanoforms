@@ -9,8 +9,10 @@ import mimetypes
 def download(request, workflow_id, output_key, file_name):
     outputs = workflow_outputs(workflow_id).get('outputs', {})
     out = outputs.get(output_key)
-    paths = [out] if isinstance(out, str) else out
-    path = next(x for x in paths if x.endswith(file_name))
+    if isinstance(out, str):
+        path = out
+    else:
+        path = next(x for x in out if x.endswith(file_name))
     if not path:
         return HttpResponseForbidden()
 
