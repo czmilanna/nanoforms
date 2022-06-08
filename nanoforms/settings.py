@@ -17,6 +17,7 @@ SELF_URL = os.environ.get('SELF_URL', 'http://localhost:8000')
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 BASE_STORAGE_DIR = os.environ.get('BASE_STORAGE_DIR', '/srv/nanoporedev/')
+KRAKEN_DB_DIR = os.path.join(BASE_STORAGE_DIR, 'minikraken2_v2_8GB_201904_UPDATE/')
 BASE_UPLOAD_DIR = os.environ.get('BASE_UPLOAD_DIR', os.path.join(BASE_STORAGE_DIR, 'upload/'))
 WDL_DIR = BASE_DIR.joinpath('wdl')
 

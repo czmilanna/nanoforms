@@ -12,6 +12,7 @@ from django.http import HttpResponseRedirect, Http404, FileResponse
 from django.urls import reverse
 from django.views import generic
 
+from nanoforms.settings import KRAKEN_DB_DIR
 from nanoforms_app.cromwell import workflow_hybrid_assembly
 from nanoforms_app.mixin import OwnerOrAdminOrPublicAccessMixin
 from nanoforms_app.models import Workflow, Dataset
@@ -108,7 +109,7 @@ class HybridAssemblyCreateView(generic.FormView):
             prokka_plasmid = ''.join(str(prokka_plasmid).split())
         params = {
             'prz_hybrid_assembly.nanopore_directory': workflow.dataset.directory,
-            'prz_hybrid_assembly.kraken_db': "/Q/data/prz/minikraken2_v2_8GB_201904_UPDATE/",
+            'prz_hybrid_assembly.kraken_db': KRAKEN_DB_DIR,
             'prz_hybrid_assembly.nanofilt.nanopore_headcrop': int(form.data['nanofilt_headcrop']),
             'prz_hybrid_assembly.nanofilt.nanopore_q': int(form.data['nanofilt_q']),
             'prz_hybrid_assembly.fastp.illumina_q': int(form.data['fastp_q']),
